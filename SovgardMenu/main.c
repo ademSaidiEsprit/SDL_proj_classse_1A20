@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include "menu.h"
 #include "config.h"
 
@@ -8,6 +9,7 @@ int main()
 {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     Mix_Music *bgMusic = Mix_LoadMUS(BG_MUSIC);
 	if (!bgMusic) {
@@ -35,6 +37,7 @@ int main()
 
     Mix_CloseAudio();
     IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 
     return 0;
