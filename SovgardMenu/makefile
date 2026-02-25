@@ -1,6 +1,7 @@
+
 CC = gcc
 CFLAGS = -Wall -Wextra -g `sdl2-config --cflags`
-LDFLAGS = `sdl2-config --libs` -lSDL2_image -lSDL2_mixer
+LDFLAGS = `sdl2-config --libs` -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 SRC = main.c menu.c button.c
 OBJ = $(SRC:.c=.o)
@@ -22,4 +23,3 @@ fclean: clean
 	rm -f $(EXEC)
 
 re: fclean all
-
