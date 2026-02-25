@@ -1,73 +1,149 @@
+#include "menu.h"
 #include "button.h"
+#include "config.h"
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 
-
-
-void initButton(Button *btn, SDL_Renderer *renderer,
-                char img[], char over[],char click[],
-                int x, int y)
+#define spacing 200
+void updateLayout(SDL_Renderer *renderer, Button *btnOui, Button *btnNon,Button *btnLoad,Button *btnNew , SDL_Rect *recTxt)
 {
-    btn->normal = IMG_LoadTexture(renderer, img);
-    btn->hover = IMG_LoadTexture(renderer, over);
-    btn->clicked = IMG_LoadTexture(renderer, click);
-	int w,h;
-    SDL_QueryTexture(btn->normal, NULL, NULL, &w, &h);
+    int winW, winH;
+    SDL_GetRendererOutputSize(renderer, &winW, &winH);
+
+    int totalWidth = btnOui->rect.w + btnNon->rect.w + spacing;
+    int startX = (winW - totalWidth) / 2;
+
+    btnOui->rect.x = startX;
+    btnNon->rect.x = startX + btnOui->rect.w + spacing;
+
+    btnOui->rect.y = winH / 2;
+    btnNon->rect.y = winH / 2;
+    
+	btnLoad->rect.x = winW / 2- btnLoad->rect.w /2;
+	btnLoad->rect.y = winH / 2-300;
 	
-	btn->rect.w=w/20;
-	btn->rect.h=h/20;
-    btn->rect.x = x;
-    btn->rect.y = y;
-    btn->state = 0;
-    btn->wasHover = 0;
+	btnNew->rect.x = winW / 2- btnNew->rect.w /2;
+	btnNew->rect.y = winH / 2;
+	
+	recTxt->x=winW / 2 -recTxt->w/2;
+	recTxt->y= winH / 2 - 150;
+
+
+   
+    
+    
 }
 
-void renderButton(Button *btn, SDL_Renderer *renderer)
+
+void runSaveMenu(SDL_Renderer *renderer)
 {
-    if (btn->state == 0)
-        SDL_RenderCopy(renderer, btn->normal, NULL, &btn->rect);
-    else if (btn->state == 1)
-        SDL_RenderCopy(renderer, btn->hover, NULL, &btn->rect);
-    else
-        SDL_RenderCopy(renderer, btn->clicked, NULL, &btn->rect);
-}
+    SDL_Texture *background = IMG_LoadTexture(renderer, BG_SAVE_PATH);
+    int flags = MIX_INIT_MP3;
+    if ((Mix_Init(flags) & flags) != flags) {
+        printf("MP3 support not available: %s\n", Mix_GetError());
+    }
+    Mix_Chunk *hoverSound = Mix_LoadWAV(HOVER_SOUND);
+    
+    
 
-int handleButtonEvent(Button *btn, SDL_Event *e, Mix_Chunk *hoverSound)
-{
-    int mouseX, mouseY;
-    SDL_GetMouseState(&mouseX, &mouseY);
+    Button btnOui, btnNon, btnLoad, btnNew;
+    int winW,winH;
+    
+	SDL_GetRendererOutputSize(renderer, &winW, &winH);
+	
+	SDL_Color white={255,255,255,255};
+    TTF_Font *font = TTF_OpenFont("assets/Blue Winter.ttf", 40);
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font,"Save your game?",white);
+    SDL_Texture *textTexture = SDL_CreateTextureFromSurface(renderer,textSurface);
+	SDL_FreeSurface(textSurface);
+    
+    SDL_Rect recTxt;
+	SDL_QueryTexture(textTexture, NULL, NULL, &recTxt.w, &recTxt.h);
 
-    int inside = mouseX > btn->rect.x &&
-                 mouseX < btn->rect.x + btn->rect.w &&
-                 mouseY > btn->rect.y &&
-                 mouseY < btn->rect.y + btn->rect.h;
 
-    if (inside) {
-        btn->state = 1;
+	
+	
+	
+	
+	
+    initButton(&btnOui, renderer, BTN_OUI_IMG, BTN_OUI_OVER, BTN_OUI_CLICK, 400, 400);
+    
+	
+	
+    initButton(&btnNon, renderer, BTN_NON_IMG, BTN_NON_OVER, BTN_NON_CLICK, 400, 400);
+    
+    
+    
 
-        if (!btn->wasHover) {
-            Mix_PlayChannel(-1, hoverSound, 0);
-            btn->wasHover = 1;
+    initButton(&btnLoad, renderer, BTN_LOAD_IMG, BTN_LOAD_OVER, BTN_LOAD_CLICK, 500, 300);
+    
+    
+    initButton(&btnNew, renderer, BTN_NEW_IMG, BTN_NEW_OVER, BTN_NEW_CLICK, 500, 450);
+    
+//
+
+    updateLayout(renderer,&btnOui,&btnNon,&btnLoad,&btnNew,&recTxt);
+
+
+    int showteardMenu = 0;
+    int showSecondMenu = 0;
+    int running = 1;
+    SDL_Event e;
+
+    while (running) {
+        while (SDL_PollEvent(&e)) {
+
+            if (e.type == SDL_QUIT)
+                running = 0;
+
+            if (!showSecondMenu) {
+                if (handleButtonEvent(&btnOui, &e, hoverSound))
+                    showSecondMenu = 1;
+
+                if (handleButtonEvent(&btnNon, &e, hoverSound))
+                    running = 0;
+            } else {
+            
+            	if (handleButtonEvent(&btnNew, &e, hoverSound)||
+            	(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_n)){
+                    showteardMenu = 1;
+                    printf("Sous menu joueur\n");
+            	}
+
+                if (handleButtonEvent(&btnLoad, &e, hoverSound))
+                    printf("Charger jeu\n");
+
+
+            }
+            if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_RESIZED){
+            	updateLayout(renderer,&btnOui,&btnNon,&btnLoad,&btnNew,&recTxt);
+            }
         }
 
-        if (e->type == SDL_MOUSEBUTTONDOWN) {
-            btn->state = 2;
+        SDL_RenderClear(renderer);
+        SDL_RenderCopy(renderer, background, NULL, NULL);
+        
+
+        if (!showSecondMenu) {
+        	SDL_RenderCopy(renderer, textTexture, NULL, &recTxt);
+            renderButton(&btnOui, renderer);
+            renderButton(&btnNon, renderer);
+        } else {
+        	if(!showteardMenu){
+		        renderButton(&btnLoad, renderer);
+		        renderButton(&btnNew, renderer);
+		    }
         }
 
-        if (e->type == SDL_MOUSEBUTTONUP) {
-            return 1; // bouton cliqué
-        }
-    } else {
-        btn->state = 0;
-        btn->wasHover = 0;
+        SDL_RenderPresent(renderer);
     }
 
-    return 0;
-}
+    destroyButton(&btnOui);
+    destroyButton(&btnNon);
+    destroyButton(&btnLoad);
+    destroyButton(&btnNew);
 
-void destroyButton(Button *btn)
-{
-    SDL_DestroyTexture(btn->normal);
-    SDL_DestroyTexture(btn->hover);
-    SDL_DestroyTexture(btn->clicked);
+    SDL_DestroyTexture(background);
+    Mix_FreeChunk(hoverSound);
 }
