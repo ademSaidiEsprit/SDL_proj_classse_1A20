@@ -1,0 +1,10 @@
+gcc joueur.c menu.c -o jeu `sdl2-config --cflags --libs` -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+gcc sauv_main.c sauv_menu.c sauve_button.c  -o sauv -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf 
+gcc main.c source.c -o game -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+gcc main_principal.c menu_principal.c -o app `sdl2-config --cflags --libs` -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+gcc ryen_main.c menu_option.c -o ryen `sdl2-config --cflags --libs` -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+gcc enigme_main.c sous_menu_enigme.c -o nour -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -g
+
+
+
+gcc theMain.c sauv_main.c sauv_menu.c sauve_button.c joueur.c menu.c  main.c source.c main_principal.c menu_principal.c ryen_main.c menu_option.c enigme_main.c sous_menu_enigme.c -o main1 `sdl2-config --cflags --libs` -lSDL2_mixer -lSDL2_image -lSDL2_ttf 
