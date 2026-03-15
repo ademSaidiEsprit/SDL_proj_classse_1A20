@@ -70,9 +70,9 @@ void creerBoutonTailleFixe(Bouton *bouton, SDL_Texture *texture, int x, int y, i
 // ============================================================================
 // PHASE 2 : INPUT (Gestion des événements)
 // ============================================================================
-void gererEvenements(MenuOption *menu);
+int gererEvenements(MenuOption *menu);
 void gererMouvementSouris(MenuOption *menu, int x, int y);
-void gererClicSouris(MenuOption *menu, int x, int y);
+int gererClicSouris(MenuOption *menu, int x, int y);
 void gererToucheClavier(MenuOption *menu, SDL_Keycode touche);
 
 // ============================================================================
@@ -103,6 +103,6 @@ void jouerSonSurvol(MenuOption *menu, int idBouton);
 // ============================================================================
 // BOUCLE PRINCIPALE DU JEU
 // ============================================================================
-int executerBoucleJeu(MenuOption *menu);
+//int executerBoucleJeu(MenuOption *menu);
 
 #endif

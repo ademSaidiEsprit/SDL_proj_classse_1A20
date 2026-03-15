@@ -166,9 +166,8 @@ void gererMouvementSouris(MenuOption *menu, int x, int y) {
     
     jouerSonSurvol(menu, boutonSurvole);
 }
-int ouvMenu=0;
-void gererClicSouris(MenuOption *menu, int x, int y) {
-    
+int gererClicSouris(MenuOption *menu, int x, int y) {
+	int ouvMenu=0;
     if (menu->btnRetour.estSurvole) {
         menu->enCours = 0;
           
@@ -198,6 +197,7 @@ void gererClicSouris(MenuOption *menu, int x, int y) {
         menu->estPleinEcran = 0;
         basculerPleinEcran(menu);
     }
+    return ouvMenu;
 }
 void gererToucheClavier(MenuOption *menu, SDL_Keycode touche) {
     switch (touche) {
@@ -229,7 +229,8 @@ void gererToucheClavier(MenuOption *menu, SDL_Keycode touche) {
             break;
     }
 }
-void gererEvenements(MenuOption *menu) {
+int gererEvenements(MenuOption *menu) {
+	int ouv;
     SDL_Event evenement;
     while (SDL_PollEvent(&evenement)) {
         switch (evenement.type) {
@@ -245,7 +246,7 @@ void gererEvenements(MenuOption *menu) {
                 
             case SDL_MOUSEBUTTONDOWN:
                 
-                gererClicSouris(menu, evenement.button.x, evenement.button.y);
+                ouv=gererClicSouris(menu, evenement.button.x, evenement.button.y);
                 break;
                 
             case SDL_KEYDOWN:
@@ -254,6 +255,7 @@ void gererEvenements(MenuOption *menu) {
                 break;
         }
     }
+    return ouv;
 }
 void mettreAJourVolume(MenuOption *menu) {
     
@@ -424,20 +426,4 @@ void jouerSonSurvol(MenuOption *menu, int idBouton) {
         menu->dernierBoutonSurvole = idBouton;
     }
 }
-int executerBoucleJeu(MenuOption *menu) {
-    
-    if (menu->musiqueOptions) {
-        Mix_PlayMusic(menu->musiqueOptions, -1);  
-    }
-    mettreAJourVolume(menu);
-    
-    
-    while (menu->enCours) {
-        gererEvenements(menu);   
-        mettreAJour(menu);       
-        afficher(menu);          
-        SDL_Delay(16); 
-        if(ouvMenu==1) menu->enCours=0;          
-    }
-    return ouvMenu;
-}
+

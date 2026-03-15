@@ -10,6 +10,8 @@ void ghaya(SDL_Renderer *renderer,SDL_Window *window)
     Sounds snd = {0};
     Buttons bt;
     GameState gs = {0};
+    
+
 
     gs.running = 1;
     gs.page = 1;

@@ -16,8 +16,23 @@ void option(SDL_Renderer *renderer,SDL_Window *window){
         libererRessources(&menu);
     }
     
-    // Exécuter la boucle principale du jeu
-    int x=executerBoucleJeu(&menu);
+    
+    if (menu.musiqueOptions) {
+        Mix_PlayMusic(menu.musiqueOptions, -1);  
+    }
+    mettreAJourVolume(&menu);
+    
+    int ouvMenu;
+    while (menu.enCours) {
+        ouvMenu=gererEvenements(&menu);   
+        mettreAJour(&menu);       
+        afficher(&menu);          
+        SDL_Delay(16); 
+        if(ouvMenu==1) menu.enCours=0;          
+    }
+
+
+    int x=ouvMenu;
     
     // Libérer les ressources
     libererRessources(&menu);

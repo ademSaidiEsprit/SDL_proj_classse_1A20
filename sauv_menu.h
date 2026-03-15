@@ -6,6 +6,5 @@
 #include "button.h"
 
 void updateLayout(SDL_Renderer *renderer, Button *btnOui, Button *btnNon,Button *btnLoad,Button *btnNew, SDL_Rect *recTxt);
-int runSaveMenu(SDL_Renderer *renderer);
 
 #endif
