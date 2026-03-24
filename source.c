@@ -34,9 +34,9 @@ int initSDL(App* app,SDL_Renderer *renderer,SDL_Window *window) {
     if(!app->window) return 1;
     app->renderer = renderer;
     if(!app->renderer) return 1;
-    app->fontPetit = TTF_OpenFont("aa.TTF", 20);
-    app->fontNormal = TTF_OpenFont("aa.TTF", 30);
-    app->fontTitre = TTF_OpenFont("aa.TTF", 50);
+    app->fontPetit = TTF_OpenFont("assets/aa.TTF", 20);
+    app->fontNormal = TTF_OpenFont("assets/aa.TTF", 30);
+    app->fontTitre = TTF_OpenFont("assets/aa.TTF", 50);
     return 0;
 }
 
